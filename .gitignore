@@ -1,0 +1,9 @@
+# filetypes
+*.log
+
+# folders
+*/build/*
+*/install/*
+*/log/*
+
+# specific files

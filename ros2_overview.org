@@ -1,0 +1,63 @@
+#+Title: ROS2 Overview
+#+Author: Eyassu Shimelis
+#+Date: August 26, 2021
+
+* Quick Overview
+  ROS2 is a middleware based on anonymous publish/subscribe mechanism that allows for message passing between different ROS processes.
+
+** Graph Concepts
+   + Nodes: An entity that uses ROS to commnicate with other nodes.
+     + A participant in the ROS graph.
+     + Use the ROS client library to communicate with other nodes.
+     + Nodes may also provide or use *Services* and *Actions*.
+     + Nodes do not necessarily need to be colocated on the same process or machine.
+   + Messages: ROS data type used when subscribing and publishing to a topic.
+   + Topics: Nodes can publish messages to a topic as well as subscribe to a topic to receive messages.
+   + Discovery: The automatic process through which nodes determine how to talk to each other.
+** Client Libraries
+   + ROS client libraries allow nodes written in different programming languages to communicate with each other. The ROS team maintains the following client libraries:
+     + rclcpp: C++ client library
+     + rclpy: Python client library
+     + There are others, though not maintained by ROS2 folks
+
+** Discovery
+   + Upon startup, a node advertises its presence to other nodes on the network with the same ROS domain (set with ROS_DOMAIN_ID environment variable). Nodes respond to this advertisement with information about themselves so that the appropriate connections can be made and the nodes can communicate.
+   + Nodes periodically advertise their presence so that connections can be made with new-found entities, even after the initial discovery period.
+   + Nodes advertise to other nodes when they go offline.
+
+     Nodes will only establish connections with other nodes if they have compatible *Quality of Service* settings. *Quality of Service (QoS)* is dependent on the following factors
+     + History
+       + Keep last: only store up to N samples, configurable via the queue depth option
+       + Keep all: store al samples, subject to the configured resource limits of the underlying middleware
+     + Depth
+       + Queue size: only honored if the "history" policy was set to "keep last"
+     + Reliability
+       + Best effort: attempt to deliver samples, but may lose them if the network is not robust
+       + Reliable: guarante that samples are delivered, may retry multiple times
+     + Durability
+       + Transient local: the publisher becomes responsible for persisting samples for "late-joining" subscriptions
+       + Volatile: no attempt is made to persist samples
+     + Deadline
+       + Duration: the expected maximum amount of time between subsequent messages being published to a topic
+     + Lifespan
+       + Duration: the maximum amount of time
+  
+     
+* Differences from ROS2
+
+  The original ROS was developed to work for a single robot, with workstation-class computational capabilities, with no realtime constraints. It also assumed excellent network connectivity with a focus on research and academia.
+
+  Compared to before, ROS2 has the following improvements:
+  + Works with teams of multiple robots
+  + Works in small embedded platforms: emphasis on small computers and "bare-metal" micro controllers to be participants in the ROS environment.
+  + Ability to operate in non-ideal networks like poor WiFi
+  + Ability to work in production environments
+  + New technologies:
+    + Zeroconf
+    + Google Protocol Buffers
+    + ZeroMQ
+    + Redis
+    + WebSockets
+    + DDS (Data Distribution Service)
+      + DDS provides a publish-subscribe transport which is very similar to ROS's publish-subscribe transport. It uses the Interface Description Language (IDL).
+      + Wiki: Real-time networking middleware
